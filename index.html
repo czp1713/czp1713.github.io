@@ -1,1 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ 爱的旋转相册 ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 10;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .photo-album {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+            margin: 50px auto;
+        }
+        
+        .album-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+        
+        .photo {
+            position: absolute;
+            width: 250px;
+            height: 300px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .photo:hover {
+            transform: scale(1.1) translateZ(50px);
+        }
+        
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo:hover img {
+            transform: scale(1.1);
+        }
+        
+        .photo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 105, 180, 0.3), rgba(255, 20, 147, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .photo:hover::before {
+            opacity: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0.6;
+            animation: float 6s infinite ease-in-out;
+            z-index: -1;
+        }
+        
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .message {
+            margin-top: 30px;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+        
+        /* 照片位置计算 - 8张照片 */
+        .photo:nth-child(1) { transform: rotateY(0deg) translateZ(400px); }
+        .photo:nth-child(2) { transform: rotateY(45deg) translateZ(400px); }
+        .photo:nth-child(3) { transform: rotateY(90deg) translateZ(400px); }
+        .photo:nth-child(4) { transform: rotateY(135deg) translateZ(400px); }
+        .photo:nth-child(5) { transform: rotateY(180deg) translateZ(400px); }
+        .photo:nth-child(6) { transform: rotateY(225deg) translateZ(400px); }
+        .photo:nth-child(7) { transform: rotateY(270deg) translateZ(400px); }
+        .photo:nth-child(8) { transform: rotateY(315deg) translateZ(400px); }
+        
+        /* 动画 */
+        @keyframes rotate {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .photo-album {
+                width: 250px;
+                height: 350px;
+            }
+            
+            .photo {
+                width: 200px;
+                height: 250px;
+            }
+            
+            .photo:nth-child(n) {
+                transform: rotateY(calc(var(--i) * 45deg)) translateZ(300px);
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+        }
+        
+        /* 爱心雨效果 */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart-rain {
+            position: absolute;
+            font-size: 20px;
+            color: #ff6b6b;
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 爱心雨背景 -->
+    <div class="hearts-container" id="hearts"></div>
+    
+    <div class="header">
+        <h1 class="title">❤️ 我的宝贝 ❤️</h1>
+        <p class="subtitle">每一个瞬间都值得珍藏</p>
+    </div>
+    
+    <div class="photo-album">
+        <div class="album-container" id="album">
+            <!-- 照片1 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=300&h=400&fit=crop" alt="美好瞬间">
+            </div>
+            
+            <!-- 照片2 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=400&fit=crop" alt="甜蜜时刻">
+            </div>
+            
+            <!-- 照片3 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1516726817505-5ed934c485c9?w=300&h=400&fit=crop" alt="幸福时光">
+            </div>
+            
+            <!-- 照片4 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1545912452-8aea7e25a3d3?w=300&h=400&fit=crop" alt="快乐回忆">
+            </div>
+            
+            <!-- 照片5 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?w=300&h=400&fit=crop" alt="珍贵记忆">
+            </div>
+            
+            <!-- 照片6 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db1604?w=300&h=400&fit=crop" alt="浪漫时刻">
+            </div>
+            
+            <!-- 照片7 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=400&fit=crop" alt="温馨瞬间">
+            </div>
+            
+            <!-- 照片8 -->
+            <div class="photo">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=400&fit=crop" alt="爱的见证">
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="btn" onclick="pauseRotation()">⏸️ 暂停</button>
+        <button class="btn" onclick="resumeRotation()">▶️ 继续</button>
+        <button class="btn" onclick="changeSpeed(0.5)">🐢 慢速</button>
+        <button class="btn" onclick="changeSpeed(2)">🐰 快速</button>
+    </div>
+    
+    <div class="message">
+        <p>💖 每一张照片都是我们故事的篇章</p>
+        <p>🌟 感谢你出现在我的生命里</p>
+        <p>🎀 爱你，直到永远...</p>
+    </div>
+    
+    <!-- 漂浮的爱心 -->
+    <div class="heart" style="top: 10%; left: 20%;">❤️</div>
+    <div class="heart" style="top: 20%; right: 15%;">💖</div>
+    <div class="heart" style="bottom: 30%; left: 10%;">💕</div>
+    <div class="heart" style="bottom: 20%; right: 20%;">💘</div>
 
+    <script>
+        // 控制旋转相册
+        const album = document.getElementById('album');
+        let isPlaying = true;
+        let rotationSpeed = 1;
+        
+        function pauseRotation() {
+            album.style.animationPlayState = 'paused';
+            isPlaying = false;
+        }
+        
+        function resumeRotation() {
+            album.style.animationPlayState = 'running';
+            isPlaying = true;
+        }
+        
+        function changeSpeed(speed) {
+            rotationSpeed = speed;
+            album.style.animationDuration = `${20 / speed}s`;
+        }
+        
+        // 点击照片放大
+        const photos = document.querySelectorAll('.photo');
+        photos.forEach(photo => {
+            photo.addEventListener('click', function() {
+                this.classList.toggle('enlarged');
+            });
+        });
+        
+        // 创建爱心雨
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const hearts = ['❤️', '💖', '💕', '💘', '💓', '💗'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart-rain';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                
+                heartsContainer.appendChild(heart);
+                
+                // 移除爱心
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            }, 300);
+        }
+        
+        // 初始化
+        createHearts();
+        
+        // 添加键盘控制
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case ' ': // 空格键
+                    if (isPlaying) pauseRotation();
+                    else resumeRotation();
+                    break;
+                case 'ArrowUp':
+                    changeSpeed(Math.min(rotationSpeed + 0.5, 5));
+                    break;
+                case 'ArrowDown':
+                    changeSpeed(Math.max(rotationSpeed - 0.5, 0.5));
+                    break;
+            }
+        });
+        
+        // 添加触摸滑动控制（移动端）
+        let touchStartX = 0;
+        album.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            pauseRotation();
+        });
+        
+        album.addEventListener('touchmove', e => {
+            const touchX = e.touches[0].clientX;
+            const deltaX = touchX - touchStartX;
+            album.style.transform = `rotateY(${deltaX / 2}deg)`;
+        });
+        
+        album.addEventListener('touchend', () => {
+            resumeRotation();
+        });
+    </script>
+</body>
+</html>
